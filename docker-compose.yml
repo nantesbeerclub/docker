@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  php:
+    build: .
+    restart: always
+    links:
+      - mysql
+    volumes:
+      - ./www:/var/www/html
+  apache:
+    image: httpd:2.4
+    restart: always
+    ports:
+      - 80:80
+    links:
+      - php
+    volumes:
+      - ./www:/var/www/html
+      - ./log/apache:/var/log/apache
+      - ./config/apache:/usr/local/apache2/conf
+  mysql:
+    image: mysql:5.6
+    restart: always
+    environment:
+      MYSQL_DATABASE: nsp2019
+      MYSQL_ROOT_PASSWORD: nsp2019
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    links:
+      - mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: nsp2019
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: nsp2019
